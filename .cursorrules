@@ -1,0 +1,47 @@
+# Car Dealership Website Project Rules
+
+## Project Patterns
+
+### Code Style
+- TypeScript is used throughout the project
+- TailwindCSS for styling with utility classes
+- React Server Components are preferred for data fetching
+- Client Components only when interactivity is needed (marked with 'use client')
+- Component files should be named with PascalCase
+- Utility/helper files should be named with camelCase
+
+### Database
+- MongoDB with Mongoose for all data storage
+- Models should be defined in src/models directory
+- Database connection managed through a lib/mongodb.ts utility
+
+### Authentication
+- JWT-based authentication system
+- Protect admin routes with middleware
+- Store tokens in HTTP-only cookies for security
+
+### File Organization
+- Pages are organized in the App Router pattern
+- Reusable components live in src/components
+- API routes are nested under src/app/api
+- Database utilities in src/lib
+- Helper functions in src/utils
+
+### Image Handling
+- Store car images in public/cars directory
+- Optimize images for web before uploading
+- Use Next.js Image component for automatic optimization
+
+### Feature Implementation Priority
+1. Core car listing and viewing functionality
+2. Search and filtering system
+3. User authentication
+4. Admin dashboard
+5. Advanced features and optimizations
+
+## Project Intelligence
+- Navigation should include Home, Cars, Search, About, Contact
+- Car listings should display make, model, year, price, mileage at minimum
+- Admin dashboard requires login with admin privileges
+- Search should support multiple filters: make, model, year range, price range, mileage, etc.
+- Contact forms should validate inputs and store inquiries in the database 
