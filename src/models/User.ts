@@ -15,7 +15,13 @@ export interface IUser {
 const UserSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
-  email: { type: String, required: true, unique: true, lowercase: true },
+  email: { 
+    type: String, 
+    required: true, 
+    unique: true, 
+    lowercase: true,
+    index: true
+  },
   password: { type: String, required: true },
   role: { 
     type: String, 
@@ -25,9 +31,6 @@ const UserSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
-
-// Add index for email
-UserSchema.index({ email: 1 });
 
 // Hash password before saving
 UserSchema.pre('save', async function(next) {
@@ -48,7 +51,7 @@ UserSchema.methods.comparePassword = async function(candidatePassword: string): 
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Check if model exists already
+// Check if model exists already to prevent recompilation in development
 const User = mongoose.models.User || mongoose.model('User', UserSchema);
 
 export default User; 

@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
-import { cookies } from 'next/headers';
-import User from '@/models/User';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET || '07f9a791f63910f006f45c1c4570fed662f0b6e5ff888100bb678c0d3a08541b';
 const JWT_EXPIRY = '7d'; // token valid for 7 days
 
 // Interface for token payload
@@ -25,11 +23,12 @@ export const generateToken = (userId: string, email: string, role: string): stri
 };
 
 /**
- * Set JWT token in HTTP-only cookie
+ * Set JWT token in HTTP-only cookie for API routes
  */
-export const setAuthCookie = (token: string): void => {
-  const cookieStore = cookies();
-  cookieStore.set({
+export const setAuthCookie = (token: string): NextResponse => {
+  const response = NextResponse.json({ success: true });
+  
+  response.cookies.set({
     name: 'auth_token',
     value: token,
     httpOnly: true,
@@ -37,18 +36,22 @@ export const setAuthCookie = (token: string): void => {
     maxAge: 60 * 60 * 24 * 7, // 7 days
     path: '/',
   });
+  
+  return response;
 };
 
 /**
- * Clear the auth cookie
+ * Clear the auth cookie for API routes
  */
-export const clearAuthCookie = (): void => {
-  const cookieStore = cookies();
-  cookieStore.delete('auth_token');
+export const clearAuthCookie = (): NextResponse => {
+  const response = NextResponse.json({ success: true, message: 'Logged out successfully' });
+  response.cookies.delete('auth_token');
+  return response;
 };
 
 /**
- * Verify JWT token from cookie
+ * Verify JWT token
+ * Safe to use in Edge runtime
  */
 export const verifyToken = (token: string): TokenPayload | null => {
   try {
@@ -59,30 +62,17 @@ export const verifyToken = (token: string): TokenPayload | null => {
 };
 
 /**
- * Get current user from token
+ * Get token from request
  */
-export const getCurrentUser = async (): Promise<any | null> => {
-  const cookieStore = cookies();
-  const token = cookieStore.get('auth_token')?.value;
-  
-  if (!token) return null;
-  
-  const decoded = verifyToken(token);
-  if (!decoded) return null;
-  
-  try {
-    const user = await User.findById(decoded.userId).select('-password');
-    return user;
-  } catch (error) {
-    return null;
-  }
+export const getTokenFromRequest = (request: NextRequest): string | undefined => {
+  return request.cookies.get('auth_token')?.value;
 };
 
 /**
  * Authentication middleware for API routes
  */
 export const authMiddleware = async (request: NextRequest) => {
-  const token = request.cookies.get('auth_token')?.value;
+  const token = getTokenFromRequest(request);
   
   if (!token) {
     return NextResponse.json(
@@ -106,7 +96,7 @@ export const authMiddleware = async (request: NextRequest) => {
  * Admin role middleware for API routes
  */
 export const adminMiddleware = async (request: NextRequest) => {
-  const token = request.cookies.get('auth_token')?.value;
+  const token = getTokenFromRequest(request);
   
   if (!token) {
     return NextResponse.json(
