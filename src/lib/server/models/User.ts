@@ -1,16 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
-
-// Define User interface
-export interface IUser {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  role: 'user' | 'admin';
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { USER_ROLES, ROLE_PERMISSIONS } from '@/models/UserConstants';
 
 const UserSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
@@ -25,8 +15,12 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { 
     type: String, 
-    enum: ['user', 'admin'], 
+    enum: USER_ROLES,
     default: 'user' 
+  },
+  permissions: {
+    type: [String],
+    default: []
   }
 }, {
   timestamps: true
@@ -46,9 +40,29 @@ UserSchema.pre('save', async function(next) {
   }
 });
 
+// Set default permissions based on role
+UserSchema.pre('save', function(next) {
+  // If this is a new user or the role has changed, set default permissions
+  if (this.isNew || this.isModified('role')) {
+    const role = this.role as keyof typeof ROLE_PERMISSIONS;
+    this.permissions = [...ROLE_PERMISSIONS[role] || []];
+  }
+  next();
+});
+
 // Method to compare passwords
 UserSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password);
+};
+
+// Method to check if user has specific permission
+UserSchema.methods.hasPermission = function(permission: string): boolean {
+  return this.permissions.includes(permission);
+};
+
+// Method to check if user has any of the provided permissions
+UserSchema.methods.hasAnyPermission = function(permissions: string[]): boolean {
+  return this.permissions.some((p: string) => permissions.includes(p));
 };
 
 // Check if model exists already to prevent recompilation in development

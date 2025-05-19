@@ -26,8 +26,10 @@ export default function AddCarListing() {
     vehicleSeatingCapacity: '',
     driveType: '',
     vin: '',
+    stockNumber: '',
     offerType: 'In Stock',
     section: 'recent',
+    isFeatured: false,
     carFeature: [] as string[],
     images: [] as string[]
   });
@@ -41,6 +43,13 @@ export default function AddCarListing() {
   const [statusMessage, setStatusMessage] = useState('');
   
   const router = useRouter();
+  
+  // Add new state variables for dynamic attributes
+  const [bodyTypeOptions, setBodyTypeOptions] = useState<{name: string, value: string}[]>([]);
+  const [fuelTypeOptions, setFuelTypeOptions] = useState<{name: string, value: string}[]>([]);
+  const [transmissionOptions, setTransmissionOptions] = useState<{name: string, value: string}[]>([]);
+  const [driveTypeOptions, setDriveTypeOptions] = useState<{name: string, value: string}[]>([]);
+  const [featureOptions, setFeatureOptions] = useState<{name: string, value: string}[]>([]);
   
   // Common car features for quick selection
   const commonFeatures = [
@@ -95,6 +104,69 @@ export default function AddCarListing() {
     
     checkAuth();
   }, [router]);
+  
+  // Add new useEffect to fetch attributes
+  useEffect(() => {
+    // Only fetch attributes if authenticated
+    if (!isLoading) {
+      const fetchAttributes = async () => {
+        try {
+          // Fetch all attribute types
+          const attributeTypes = ['body', 'fuel', 'transmission', 'drive', 'feature'];
+          
+          for (const type of attributeTypes) {
+            const response = await fetch(`/api/admin/attributes?type=${type}`, {
+              method: 'GET',
+              credentials: 'include'
+            });
+            
+            if (!response.ok) {
+              console.error(`Failed to fetch ${type} attributes`);
+              continue;
+            }
+            
+            const data = await response.json();
+            
+            if (!data.success) {
+              console.error(`Error fetching ${type} attributes:`, data.error);
+              continue;
+            }
+            
+            // Filter out inactive attributes
+            const activeAttributes = data.attributes
+              .filter((attr: any) => attr.isActive)
+              .map((attr: any) => ({
+                name: attr.name,
+                value: attr.value
+              }));
+            
+            // Set the appropriate state based on type
+            switch (type) {
+              case 'body':
+                setBodyTypeOptions(activeAttributes);
+                break;
+              case 'fuel':
+                setFuelTypeOptions(activeAttributes);
+                break;
+              case 'transmission':
+                setTransmissionOptions(activeAttributes);
+                break;
+              case 'drive':
+                setDriveTypeOptions(activeAttributes);
+                break;
+              case 'feature':
+                setFeatureOptions(activeAttributes);
+                break;
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching attributes:', error);
+        }
+      };
+      
+      fetchAttributes();
+    }
+  }, [isLoading]);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -425,6 +497,21 @@ export default function AddCarListing() {
                   </div>
                   
                   <div>
+                    <label htmlFor="stockNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                      Stock Number
+                    </label>
+                    <input
+                      type="text"
+                      id="stockNumber"
+                      name="stockNumber"
+                      value={formData.stockNumber}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="e.g. ST12345"
+                    />
+                  </div>
+                  
+                  <div>
                     <label htmlFor="offerType" className="block text-sm font-medium text-gray-700 mb-1">
                       Status
                     </label>
@@ -438,6 +525,47 @@ export default function AddCarListing() {
                       <option value="In Stock">In Stock</option>
                       <option value="Sold">Sold</option>
                     </select>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Category & Visibility
+                    </label>
+                    
+                    <div className="flex items-center">
+                      <label htmlFor="section" className="text-sm font-medium text-gray-700 mr-2 w-24">
+                        Section:
+                      </label>
+                      <select
+                        id="section"
+                        name="section"
+                        value={formData.section}
+                        onChange={handleChange}
+                        className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="recent">Recent</option>
+                        <option value="popular">Popular</option>
+                      </select>
+                    </div>
+                    
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="isFeatured"
+                        name="isFeatured"
+                        checked={formData.isFeatured}
+                        onChange={(e) => {
+                          setFormData({
+                            ...formData,
+                            isFeatured: e.target.checked,
+                          });
+                        }}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <label htmlFor="isFeatured" className="ml-2 block text-sm text-gray-700">
+                        Featured (show in featured section)
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -458,8 +586,8 @@ export default function AddCarListing() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">Select Body Type</option>
-                      {bodyTypes.map((type) => (
-                        <option key={type} value={type}>{type}</option>
+                      {bodyTypeOptions.map((type) => (
+                        <option key={type.value} value={type.value}>{type.name}</option>
                       ))}
                     </select>
                   </div>
@@ -491,8 +619,8 @@ export default function AddCarListing() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">Select Fuel Type</option>
-                      {fuelTypes.map((type) => (
-                        <option key={type} value={type}>{type}</option>
+                      {fuelTypeOptions.map((type) => (
+                        <option key={type.value} value={type.value}>{type.name}</option>
                       ))}
                     </select>
                   </div>
@@ -509,8 +637,8 @@ export default function AddCarListing() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">Select Transmission</option>
-                      {transmissionTypes.map((type) => (
-                        <option key={type} value={type}>{type}</option>
+                      {transmissionOptions.map((type) => (
+                        <option key={type.value} value={type.value}>{type.name}</option>
                       ))}
                     </select>
                   </div>
@@ -569,10 +697,9 @@ export default function AddCarListing() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">Select Drive Type</option>
-                      <option value="FWD">Front-Wheel Drive (FWD)</option>
-                      <option value="RWD">Rear-Wheel Drive (RWD)</option>
-                      <option value="AWD">All-Wheel Drive (AWD)</option>
-                      <option value="4WD">Four-Wheel Drive (4WD)</option>
+                      {driveTypeOptions.map((type) => (
+                        <option key={type.value} value={type.value}>{type.name}</option>
+                      ))}
                     </select>
                   </div>
                   
@@ -617,18 +744,18 @@ export default function AddCarListing() {
                 <h2 className="text-lg font-semibold mb-4 text-gray-800 border-b pb-2">Features</h2>
                 <div className="space-y-4">
                   <div className="flex flex-wrap gap-2">
-                    {commonFeatures.map((feature) => (
+                    {featureOptions.map((feature) => (
                       <button
-                        key={feature}
+                        key={feature.value}
                         type="button"
-                        onClick={() => handleFeatureToggle(feature)}
+                        onClick={() => handleFeatureToggle(feature.value)}
                         className={`px-3 py-1.5 text-sm rounded-full ${
-                          selectedFeatures.includes(feature)
+                          selectedFeatures.includes(feature.value)
                             ? 'bg-blue-100 text-blue-800 border border-blue-300'
                             : 'bg-gray-100 text-gray-800 border border-gray-200 hover:bg-gray-200'
                         }`}
                       >
-                        {feature}
+                        {feature.name}
                       </button>
                     ))}
                   </div>

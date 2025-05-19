@@ -32,7 +32,10 @@ export const uploadImage = async (file: string, folder = 'home/car-images'): Pro
       resource_type: 'auto',
       use_filename: true,
       unique_filename: true,
-      overwrite: true
+      overwrite: true,
+      transformation: [
+        { quality: 'auto:good', fetch_format: 'auto', width: 2000, crop: 'limit' }
+      ]
     });
     
     return result.secure_url;

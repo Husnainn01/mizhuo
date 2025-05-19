@@ -59,6 +59,16 @@ export default function AdminPanelLayout({ children }: AdminPanelLayoutProps) {
           </Link>
           
           <Link 
+            href="/admin/attributes" 
+            className={`px-4 py-2.5 rounded-md flex items-center space-x-3 ${isActive('/admin/attributes') ? 'bg-blue-900 text-white' : 'text-blue-100 hover:bg-blue-700'}`}
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 13h.01M13 7h.01M13 13h.01M19 7h.01M19 13h.01M4 4h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" />
+            </svg>
+            <span>Attributes</span>
+          </Link>
+          
+          <Link 
             href="/admin/inquiries" 
             className={`px-4 py-2.5 rounded-md flex items-center space-x-3 ${isActive('/admin/inquiries') ? 'bg-blue-900 text-white' : 'text-blue-100 hover:bg-blue-700'}`}
           >

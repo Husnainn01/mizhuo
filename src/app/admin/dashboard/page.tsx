@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import AdminPanelLayout from '@/components/admin/AdminPanelLayout';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -10,6 +11,30 @@ export default function AdminDashboard() {
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [error, setError] = useState('');
+  const [systemStatus, setSystemStatus] = useState<{
+    storage: {
+      used: number;
+      total: number;
+      usedPercentage: number;
+      usedFormatted: string;
+      totalFormatted: string;
+    };
+    transformations: {
+      used: number;
+      total: number;
+      usedPercentage: number;
+    };
+    bandwidth: {
+      used: number;
+      total: number;
+      usedPercentage: number;
+      usedFormatted: string;
+      totalFormatted: string;
+    };
+    lastUpdated: string;
+  } | null>(null);
+  const [statusLoading, setStatusLoading] = useState(true);
+  const [statusError, setStatusError] = useState('');
   
   useEffect(() => {
     const checkAuth = async () => {
@@ -104,6 +129,39 @@ export default function AdminDashboard() {
     checkAuth();
   }, [router]);
   
+  useEffect(() => {
+    const fetchSystemStatus = async () => {
+      try {
+        setStatusLoading(true);
+        const response = await fetch('/api/admin/system/status');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch system status');
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          setSystemStatus(data.data);
+        } else {
+          throw new Error(data.error || 'Failed to fetch system status');
+        }
+      } catch (error: any) {
+        console.error('Error fetching system status:', error);
+        setStatusError(error.message);
+      } finally {
+        setStatusLoading(false);
+      }
+    };
+    
+    fetchSystemStatus();
+    
+    // Refresh the status every 5 minutes
+    const intervalId = setInterval(fetchSystemStatus, 5 * 60 * 1000);
+    
+    return () => clearInterval(intervalId);
+  }, []);
+  
   const handleLogout = async () => {
     try {
       console.log('Logging out...');
@@ -143,27 +201,8 @@ export default function AdminDashboard() {
   }
   
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-800">AutoElite Admin</h1>
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-600">
-              Welcome, {userName} {userEmail && `(${userEmail})`}
-            </span>
-            <button 
-              onClick={handleLogout}
-              className="bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1 rounded-md text-sm font-medium transition-colors"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </header>
-      
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
+    <AdminPanelLayout>
+      <div className="p-6">
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Dashboard</h2>
           <p className="text-gray-600">Welcome to the AutoElite administration panel.</p>
@@ -242,7 +281,7 @@ export default function AdminDashboard() {
             </Link>
           </div>
           
-          {/* Statistics Card */}
+          {/* Website Traffic Card */}
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-800">Website Traffic</h3>
@@ -255,7 +294,7 @@ export default function AdminDashboard() {
             <p className="text-3xl font-bold text-gray-800">1.2k</p>
             <p className="text-sm text-gray-500 mt-1">Visitors today</p>
             <Link 
-              href="/admin/statistics" 
+              href="/admin/analytics" 
               className="mt-4 inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800"
             >
               View statistics
@@ -266,92 +305,247 @@ export default function AdminDashboard() {
           </div>
         </div>
         
-        {/* Recent Activity */}
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h3>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Event
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    User
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                    New car listing added
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    John Smith
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    2023-10-15 14:32
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                      Completed
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                    User inquiry received
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    Sarah Johnson
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    2023-10-15 10:15
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                      Pending
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                    Car price updated
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    Michael Brown
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    2023-10-14 16:45
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                      Completed
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+        {/* Recent Activity Section */}
+        <div className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden mb-8">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-800">Recent Activity</h3>
           </div>
-          <div className="mt-4 text-right">
+          
+          <div className="divide-y divide-gray-200">
+            <div className="px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-gray-800">New car listing added</p>
+                  <p className="text-sm text-gray-500">John Smith</p>
+                </div>
+                <span className="text-sm text-gray-500">2023-10-15 14:32</span>
+              </div>
+              <div className="mt-2 px-3 py-1 bg-green-50 text-green-700 text-xs rounded-full inline-block">
+                Completed
+              </div>
+            </div>
+            
+            <div className="px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-gray-800">User inquiry received</p>
+                  <p className="text-sm text-gray-500">Sarah Johnson</p>
+                </div>
+                <span className="text-sm text-gray-500">2023-10-15 10:15</span>
+              </div>
+              <div className="mt-2 px-3 py-1 bg-yellow-50 text-yellow-700 text-xs rounded-full inline-block">
+                Pending
+              </div>
+            </div>
+            
+            <div className="px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-gray-800">Car price updated</p>
+                  <p className="text-sm text-gray-500">Michael Brown</p>
+                </div>
+                <span className="text-sm text-gray-500">2023-10-14 16:45</span>
+              </div>
+              <div className="mt-2 px-3 py-1 bg-green-50 text-green-700 text-xs rounded-full inline-block">
+                Completed
+              </div>
+            </div>
+          </div>
+          
+          <div className="px-6 py-3 bg-gray-50 border-t border-gray-200">
             <Link 
               href="/admin/activity" 
-              className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800"
+              className="text-sm font-medium text-blue-600 hover:text-blue-800"
             >
               View all activity
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline ml-1" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
               </svg>
             </Link>
           </div>
         </div>
+        
+        {/* Quick Links Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800">Quick Actions</h3>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <Link 
+                href="/admin/cars/add" 
+                className="flex items-center px-4 py-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+              >
+                <div className="p-2 bg-blue-100 rounded-full text-blue-600 mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-800">Add New Car Listing</p>
+                  <p className="text-xs text-gray-500">Create a new vehicle listing</p>
+                </div>
+              </Link>
+              
+              <Link 
+                href="/admin/attributes" 
+                className="flex items-center px-4 py-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors"
+              >
+                <div className="p-2 bg-purple-100 rounded-full text-purple-600 mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-800">Manage Attributes</p>
+                  <p className="text-xs text-gray-500">Edit car features, types and options</p>
+                </div>
+              </Link>
+              
+              <Link 
+                href="/admin/inquiries" 
+                className="flex items-center px-4 py-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors"
+              >
+                <div className="p-2 bg-green-100 rounded-full text-green-600 mr-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-800">Check Inquiries</p>
+                  <p className="text-xs text-gray-500">Respond to customer inquiries</p>
+                </div>
+              </Link>
+            </div>
+          </div>
+          
+          <div className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800">System Status</h3>
+            </div>
+            
+            <div className="p-6">
+              {statusLoading ? (
+                <div className="flex justify-center items-center h-40">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
+                </div>
+              ) : statusError ? (
+                <div className="bg-red-50 p-4 rounded text-red-700 text-sm">
+                  <p>Error loading system status: {statusError}</p>
+                  <button 
+                    onClick={() => window.location.reload()} 
+                    className="mt-2 px-3 py-1 bg-red-100 hover:bg-red-200 rounded text-xs"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="mb-4">
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm font-medium text-gray-700">Disk Usage (Cloudinary)</span>
+                      <span className={`text-sm font-medium ${
+                        systemStatus?.storage.usedPercentage || 0 > 80 
+                          ? 'text-red-600' 
+                          : systemStatus?.storage.usedPercentage || 0 > 60 
+                            ? 'text-yellow-600' 
+                            : 'text-green-600'
+                      }`}>
+                        {systemStatus?.storage.usedFormatted || '0'} / {systemStatus?.storage.totalFormatted || '0'}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className={`h-2 rounded-full ${
+                          systemStatus?.storage.usedPercentage || 0 > 80 
+                            ? 'bg-red-500' 
+                            : systemStatus?.storage.usedPercentage || 0 > 60 
+                              ? 'bg-yellow-500' 
+                              : 'bg-green-500'
+                        }`} 
+                        style={{ width: `${systemStatus?.storage.usedPercentage || 0}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm font-medium text-gray-700">Bandwidth Usage</span>
+                      <span className={`text-sm font-medium ${
+                        systemStatus?.bandwidth.usedPercentage || 0 > 80 
+                          ? 'text-red-600' 
+                          : systemStatus?.bandwidth.usedPercentage || 0 > 60 
+                            ? 'text-yellow-600' 
+                            : 'text-green-600'
+                      }`}>
+                        {systemStatus?.bandwidth.usedFormatted || '0'} / {systemStatus?.bandwidth.totalFormatted || '0'}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className={`h-2 rounded-full ${
+                          systemStatus?.bandwidth.usedPercentage || 0 > 80 
+                            ? 'bg-red-500' 
+                            : systemStatus?.bandwidth.usedPercentage || 0 > 60 
+                              ? 'bg-yellow-500' 
+                              : 'bg-green-500'
+                        }`} 
+                        style={{ width: `${systemStatus?.bandwidth.usedPercentage || 0}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm font-medium text-gray-700">Transformations</span>
+                      <span className={`text-sm font-medium ${
+                        systemStatus?.transformations.usedPercentage || 0 > 80 
+                          ? 'text-red-600' 
+                          : systemStatus?.transformations.usedPercentage || 0 > 60 
+                            ? 'text-yellow-600' 
+                            : 'text-green-600'
+                      }`}>
+                        {systemStatus?.transformations.used?.toLocaleString() || '0'} / 
+                        {systemStatus?.transformations.total?.toLocaleString() || '0'}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className={`h-2 rounded-full ${
+                          systemStatus?.transformations.usedPercentage || 0 > 80 
+                            ? 'bg-red-500' 
+                            : systemStatus?.transformations.usedPercentage || 0 > 60 
+                              ? 'bg-yellow-500' 
+                              : 'bg-green-500'
+                        }`} 
+                        style={{ width: `${systemStatus?.transformations.usedPercentage || 0}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 pt-6 border-t border-gray-200">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <p className="text-sm font-medium text-gray-900">All Systems Operational</p>
+                        <p className="text-xs text-gray-500">
+                          Last updated: {systemStatus?.lastUpdated ? new Date(systemStatus.lastUpdated).toLocaleString() : 'Unknown'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </AdminPanelLayout>
   );
 } 

@@ -50,6 +50,9 @@ export default function AdminNav() {
               <NavLink href="/admin/cars" active={isActive('/admin/cars')}>
                 Cars
               </NavLink>
+              <NavLink href="/admin/attributes" active={isActive('/admin/attributes')}>
+                Attributes
+              </NavLink>
               <NavLink href="/admin/inquiries" active={isActive('/admin/inquiries')}>
                 Inquiries
               </NavLink>
@@ -108,6 +111,9 @@ export default function AdminNav() {
             </MobileNavLink>
             <MobileNavLink href="/admin/cars" active={isActive('/admin/cars')}>
               Cars
+            </MobileNavLink>
+            <MobileNavLink href="/admin/attributes" active={isActive('/admin/attributes')}>
+              Attributes
             </MobileNavLink>
             <MobileNavLink href="/admin/inquiries" active={isActive('/admin/inquiries')}>
               Inquiries

@@ -20,6 +20,7 @@ interface Car {
   images: string[];
   image: string;
   createdAt: string;
+  isFeatured?: boolean;
 }
 
 interface PaginationData {
@@ -178,6 +179,30 @@ export default function CarManagement() {
     }
   };
   
+  const handleToggleFeatured = async (carId: string, currentStatus: boolean) => {
+    try {
+      const response = await fetch(`/api/admin/cars/${carId}/toggle-featured`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ isFeatured: !currentStatus }),
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update featured status');
+      }
+      
+      // Refresh the car listings
+      fetchCarListings(searchTerm, pagination.page);
+    } catch (error: any) {
+      console.error('Error updating featured status:', error);
+      alert(`Error: ${error.message || 'Failed to update featured status'}`);
+    }
+  };
+  
   // Function to format price with currency
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {
@@ -251,6 +276,7 @@ export default function CarManagement() {
                   <th className="text-left py-3 px-4 font-semibold text-sm text-gray-600">Year</th>
                   <th className="text-left py-3 px-4 font-semibold text-sm text-gray-600">Price</th>
                   <th className="text-left py-3 px-4 font-semibold text-sm text-gray-600">Status</th>
+                  <th className="text-left py-3 px-4 font-semibold text-sm text-gray-600">Featured</th>
                   <th className="text-left py-3 px-4 font-semibold text-sm text-gray-600">Actions</th>
                 </tr>
               </thead>
@@ -292,6 +318,19 @@ export default function CarManagement() {
                         </span>
                       </td>
                       <td className="py-3 px-4">
+                        <button
+                          onClick={() => handleToggleFeatured(car._id, !!car.isFeatured)}
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            car.isFeatured 
+                              ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' 
+                              : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                          }`}
+                          title={car.isFeatured ? "Remove from featured" : "Add to featured"}
+                        >
+                          {car.isFeatured ? 'Featured' : 'Not Featured'}
+                        </button>
+                      </td>
+                      <td className="py-3 px-4">
                         <div className="flex space-x-2">
                           <Link 
                             href={`/admin/cars/edit/${car._id}`}
@@ -302,12 +341,12 @@ export default function CarManagement() {
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                           </Link>
-                                              <button 
-                      className="text-red-600 hover:text-red-800 disabled:opacity-50"
-                      title="Delete"
-                      onClick={() => openDeleteDialog(car)}
-                      disabled={isDeleting}
-                    >
+                          <button 
+                            className="text-red-600 hover:text-red-800 disabled:opacity-50"
+                            title="Delete"
+                            onClick={() => openDeleteDialog(car)}
+                            disabled={isDeleting}
+                          >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>

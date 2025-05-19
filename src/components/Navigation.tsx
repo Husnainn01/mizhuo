@@ -2,8 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
 
 const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -15,12 +21,38 @@ const Navigation = () => {
     setMounted(true);
   }, []);
 
-  const routes = [
+  const menuItems = [
     { name: 'Home', path: '/' },
-    { name: 'Cars', path: '/cars' },
-    { name: 'Auction', path: '/auction' },
-    { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' },
+    {
+      name: 'Vehicles',
+      items: [
+        { name: 'All Cars', path: '/cars' },
+        // { name: 'Auction', path: '/auction' },
+      ]
+    },
+    {
+      name: 'Auction', path: '/auction',
+      // items: [
+      //   { name: 'Auction', path: '/auction' },
+      // ]
+    },
+    {
+      name: 'Banking', path: '/banking',
+    },
+    {
+      name: 'Resources',
+      items: [
+        { name: 'How to Buy', path: '/how-to-buy' },
+        { name: 'FAQ', path: '/faq' },
+      ]
+    },
+    {
+      name: 'Company',
+      items: [
+        { name: 'About Us', path: '/about' },
+        { name: 'Contact', path: '/contact' },
+      ]
+    }
   ];
 
   const toggleMobileMenu = () => {
@@ -56,18 +88,43 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
-            {routes.map((route) => (
-              <Link
-                key={route.path}
-                href={route.path}
-                className={`font-medium px-4 py-2 rounded-md transition-colors ${
-                  pathname === route.path
-                    ? 'bg-red-600 text-white'
-                    : 'text-black hover:bg-blue-50 hover:text-blue-600'
-                }`}
-              >
-                {route.name}
-              </Link>
+            {menuItems.map((item) => (
+              item.path ? (
+                <Link
+                  key={item.path}
+                  href={item.path}
+                  className={`font-medium px-4 py-2 rounded-md transition-colors ${
+                    pathname === item.path
+                      ? 'bg-red-600 text-white'
+                      : 'text-black hover:bg-blue-50 hover:text-blue-600'
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              ) : (
+                <DropdownMenu key={item.name}>
+                  <DropdownMenuTrigger className="flex items-center px-4 py-2 rounded-md font-medium text-black hover:bg-blue-50 hover:text-blue-600 transition-colors focus:outline-none">
+                    {item.name}
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-48">
+                    {item.items?.map((subItem) => (
+                      <DropdownMenuItem key={subItem.path} asChild>
+                        <Link
+                          href={subItem.path}
+                          className={`w-full ${
+                            pathname === subItem.path
+                              ? 'bg-blue-50 text-blue-600'
+                              : 'text-gray-700 hover:text-blue-600'
+                          }`}
+                        >
+                          {subItem.name}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )
             ))}
           </div>
 
@@ -127,19 +184,44 @@ const Navigation = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white px-4 pt-2 pb-4 border-t border-black/10 shadow-md">
           <div className="flex flex-col space-y-2">
-            {routes.map((route) => (
-              <Link
-                key={route.path}
-                href={route.path}
-                className={`font-medium py-3 px-4 rounded-md transition-colors ${
-                  pathname === route.path
-                    ? 'bg-red-600 text-white'
-                    : 'text-black hover:bg-blue-50 hover:text-blue-600'
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {route.name}
-              </Link>
+            {menuItems.map((item) => (
+              <div key={item.name}>
+                {item.path ? (
+                  <Link
+                    href={item.path}
+                    className={`block font-medium py-3 px-4 rounded-md transition-colors ${
+                      pathname === item.path
+                        ? 'bg-red-600 text-white'
+                        : 'text-black hover:bg-blue-50 hover:text-blue-600'
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ) : (
+                  <>
+                    <div className="font-medium text-gray-500 px-4 py-2">
+                      {item.name}
+                    </div>
+                    <div className="pl-4 space-y-1">
+                      {item.items?.map((subItem) => (
+                        <Link
+                          key={subItem.path}
+                          href={subItem.path}
+                          className={`block py-2 px-4 rounded-md ${
+                            pathname === subItem.path
+                              ? 'bg-blue-50 text-blue-600'
+                              : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'
+                          }`}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          {subItem.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
             ))}
             <hr className="border-black/10 my-2" />
             <div className="flex flex-col space-y-2 mt-2">

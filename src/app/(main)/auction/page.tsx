@@ -58,7 +58,7 @@ export default function AuctionPage() {
   const days = Object.keys(auctionSchedule) as Array<keyof typeof auctionSchedule>;
 
   return (
-    <main className="flex min-h-screen flex-col">
+    <div>
       {/* Auction Schedule Section - Redesigned */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-6">
@@ -248,26 +248,27 @@ export default function AuctionPage() {
               <div className="bg-blue-50 rounded-lg p-6">
                 <h3 className="text-lg font-bold text-blue-800 mb-2">Can I inspect vehicles before bidding?</h3>
                 <p className="text-gray-700">
-                  Yes, we provide detailed inspection reports and images for all vehicles. For premium members, we can arrange physical inspections at the auction locations.
+                  Yes, we provide detailed inspection reports and images for each vehicle. For select auctions, in-person inspections can be arranged with advance notice.
                 </p>
               </div>
               
               <div className="bg-blue-50 rounded-lg p-6">
-                <h3 className="text-lg font-bold text-blue-800 mb-2">What fees are associated with bidding?</h3>
+                <h3 className="text-lg font-bold text-blue-800 mb-2">What happens if I win a bid?</h3>
                 <p className="text-gray-700">
-                  Our service charges include a buyer's fee (percentage of winning bid), transportation costs, and any applicable taxes or duties. A detailed fee structure will be provided upon registration.
+                  Our team will contact you to confirm the purchase and guide you through the payment process. We also offer comprehensive shipping and logistics services to deliver your vehicle to your desired location.
                 </p>
               </div>
-            </div>
-            
-            <div className="text-center mt-8">
-              <Link href="/auction/faq" className="text-blue-600 hover:text-blue-800 font-medium">
-                View All Frequently Asked Questions →
-              </Link>
+              
+              <div className="bg-blue-50 rounded-lg p-6">
+                <h3 className="text-lg font-bold text-blue-800 mb-2">How do I make payment for auction vehicles?</h3>
+                <p className="text-gray-700">
+                  We accept bank transfers, credit cards, and other secure payment methods. All transactions are handled through our secure payment portal, ensuring the safety of your financial information.
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 } 

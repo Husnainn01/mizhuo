@@ -2,8 +2,122 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function HeroSection() {
+  const router = useRouter();
+  
+  // Search form state
+  const [make, setMake] = useState("");
+  const [model, setModel] = useState("");
+  const [bodyType, setBodyType] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [minYear, setMinYear] = useState("");
+  const [maxYear, setMaxYear] = useState("");
+  
+  // API data
+  const [makes, setMakes] = useState<string[]>([]);
+  const [models, setModels] = useState<string[]>([]);
+  const [bodyTypes, setBodyTypes] = useState<{name: string, value: string}[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Fetch makes from API
+  useEffect(() => {
+    const fetchMakes = async () => {
+      try {
+        const response = await fetch('/api/attributes?type=makes');
+        if (!response.ok) throw new Error('Failed to fetch makes');
+        const data = await response.json();
+        if (data.success) {
+          setMakes(data.attributes || []);
+        }
+      } catch (error) {
+        console.error('Error fetching makes:', error);
+      }
+    };
+    
+    const fetchBodyTypes = async () => {
+      try {
+        const response = await fetch('/api/attributes?type=body');
+        if (!response.ok) throw new Error('Failed to fetch body types');
+        const data = await response.json();
+        if (data.success) {
+          setBodyTypes(data.attributes || []);
+        }
+      } catch (error) {
+        console.error('Error fetching body types:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchMakes();
+    fetchBodyTypes();
+  }, []);
+  
+  // Fetch models based on selected make
+  useEffect(() => {
+    const fetchModels = async () => {
+      if (!make) {
+        setModels([]);
+        return;
+      }
+      
+      try {
+        const response = await fetch(`/api/attributes?type=models&make=${make}`);
+        if (!response.ok) throw new Error('Failed to fetch models');
+        const data = await response.json();
+        if (data.success) {
+          setModels(data.attributes || []);
+        }
+      } catch (error) {
+        console.error('Error fetching models:', error);
+      }
+    };
+    
+    fetchModels();
+  }, [make]);
+
+  // Generate price options
+  const priceOptions = [
+    { value: "5000", label: "$5,000" },
+    { value: "10000", label: "$10,000" },
+    { value: "15000", label: "$15,000" },
+    { value: "20000", label: "$20,000" },
+    { value: "25000", label: "$25,000" },
+    { value: "30000", label: "$30,000" },
+    { value: "40000", label: "$40,000" },
+    { value: "50000", label: "$50,000" },
+    { value: "75000", label: "$75,000" },
+    { value: "100000", label: "$100,000" },
+    { value: "150000", label: "$150,000" },
+    { value: "200000", label: "$200,000+" }
+  ];
+  
+  // Generate year options (from 1990 to current year)
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: currentYear - 1989 }, (_, i) => ({
+    value: String(1990 + i),
+    label: String(1990 + i)
+  })).reverse();
+
+  const handleSearch = () => {
+    const searchParams = new URLSearchParams();
+    
+    if (make) searchParams.append("make", make);
+    if (model) searchParams.append("model", model);
+    if (bodyType) searchParams.append("bodyType", bodyType);
+    if (minPrice) searchParams.append("minPrice", minPrice);
+    if (maxPrice) searchParams.append("maxPrice", maxPrice);
+    if (minYear) searchParams.append("minYear", minYear);
+    if (maxYear) searchParams.append("maxYear", maxYear);
+    
+    // Navigate to cars page with search params
+    router.push(`/cars?${searchParams.toString()}`);
+  };
+
   return (
     <section className="relative w-full h-[600px]">
       {/* Background Image with Overlay */}
@@ -36,16 +150,18 @@ export default function HeroSection() {
                       <div className="relative">
                         <select 
                           id="make"
+                          value={make}
+                          onChange={(e) => {
+                            setMake(e.target.value);
+                            setModel(""); // Reset model when make changes
+                          }}
                           className="w-full py-2 px-3 bg-white border border-gray-200 rounded-md text-sm appearance-none pr-8 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent shadow-sm transition-all"
+                          disabled={isLoading}
                         >
                           <option value="">Select Make</option>
-                          <option value="toyota">Toyota</option>
-                          <option value="honda">Honda</option>
-                          <option value="ford">Ford</option>
-                          <option value="bmw">BMW</option>
-                          <option value="mercedes">Mercedes-Benz</option>
-                          <option value="audi">Audi</option>
-                          <option value="tesla">Tesla</option>
+                          {makes.map((makeName) => (
+                            <option key={makeName} value={makeName}>{makeName}</option>
+                          ))}
                         </select>
                         <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-blue-600">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -61,13 +177,15 @@ export default function HeroSection() {
                       <div className="relative">
                         <select 
                           id="model"
+                          value={model}
+                          onChange={(e) => setModel(e.target.value)}
                           className="w-full py-2 px-3 bg-white border border-gray-200 rounded-md text-sm appearance-none pr-8 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent shadow-sm transition-all"
+                          disabled={!make || isLoading}
                         >
                           <option value="">Select Model</option>
-                          <option value="camry">Camry</option>
-                          <option value="corolla">Corolla</option>
-                          <option value="rav4">RAV4</option>
-                          <option value="highlander">Highlander</option>
+                          {models.map((modelName) => (
+                            <option key={modelName} value={modelName}>{modelName}</option>
+                          ))}
                         </select>
                         <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-blue-600">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -83,15 +201,15 @@ export default function HeroSection() {
                       <div className="relative">
                         <select 
                           id="bodyType"
+                          value={bodyType}
+                          onChange={(e) => setBodyType(e.target.value)}
                           className="w-full py-2 px-3 bg-white border border-gray-200 rounded-md text-sm appearance-none pr-8 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent shadow-sm transition-all"
+                          disabled={isLoading}
                         >
                           <option value="">Select Body Type</option>
-                          <option value="sedan">Sedan</option>
-                          <option value="suv">SUV</option>
-                          <option value="truck">Truck</option>
-                          <option value="coupe">Coupe</option>
-                          <option value="convertible">Convertible</option>
-                          <option value="hatchback">Hatchback</option>
+                          {bodyTypes.map((type) => (
+                            <option key={type.value} value={type.value}>{type.name}</option>
+                          ))}
                         </select>
                         <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-blue-600">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -107,14 +225,16 @@ export default function HeroSection() {
                       <div className="grid grid-cols-2 gap-2">
                         <div className="relative">
                           <select 
+                            value={minPrice}
+                            onChange={(e) => setMinPrice(e.target.value)}
                             className="w-full py-2 px-3 bg-white border border-gray-200 rounded-md text-sm appearance-none pr-8 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent shadow-sm transition-all"
                           >
                             <option value="">Min Price</option>
-                            <option value="10000">$10,000</option>
-                            <option value="20000">$20,000</option>
-                            <option value="30000">$30,000</option>
-                            <option value="50000">$50,000</option>
-                            <option value="75000">$75,000</option>
+                            {priceOptions.map((option) => (
+                              <option key={`min-${option.value}`} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
                           </select>
                           <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-blue-600">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -124,15 +244,16 @@ export default function HeroSection() {
                         </div>
                         <div className="relative">
                           <select 
+                            value={maxPrice}
+                            onChange={(e) => setMaxPrice(e.target.value)}
                             className="w-full py-2 px-3 bg-white border border-gray-200 rounded-md text-sm appearance-none pr-8 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent shadow-sm transition-all"
                           >
                             <option value="">Max Price</option>
-                            <option value="20000">$20,000</option>
-                            <option value="30000">$30,000</option>
-                            <option value="50000">$50,000</option>
-                            <option value="75000">$75,000</option>
-                            <option value="100000">$100,000</option>
-                            <option value="200000">$200,000+</option>
+                            {priceOptions.map((option) => (
+                              <option key={`max-${option.value}`} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
                           </select>
                           <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-blue-600">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -149,15 +270,16 @@ export default function HeroSection() {
                       <div className="grid grid-cols-2 gap-2">
                         <div className="relative">
                           <select 
+                            value={minYear}
+                            onChange={(e) => setMinYear(e.target.value)}
                             className="w-full py-2 px-3 bg-white border border-gray-200 rounded-md text-sm appearance-none pr-8 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent shadow-sm transition-all"
                           >
                             <option value="">Min Year</option>
-                            <option value="2018">2018</option>
-                            <option value="2019">2019</option>
-                            <option value="2020">2020</option>
-                            <option value="2021">2021</option>
-                            <option value="2022">2022</option>
-                            <option value="2023">2023</option>
+                            {yearOptions.map((option) => (
+                              <option key={`min-${option.value}`} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
                           </select>
                           <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-blue-600">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -167,14 +289,16 @@ export default function HeroSection() {
                         </div>
                         <div className="relative">
                           <select 
+                            value={maxYear}
+                            onChange={(e) => setMaxYear(e.target.value)}
                             className="w-full py-2 px-3 bg-white border border-gray-200 rounded-md text-sm appearance-none pr-8 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent shadow-sm transition-all"
                           >
                             <option value="">Max Year</option>
-                            <option value="2023">2023</option>
-                            <option value="2022">2022</option>
-                            <option value="2021">2021</option>
-                            <option value="2020">2020</option>
-                            <option value="2019">2019</option>
+                            {yearOptions.map((option) => (
+                              <option key={`max-${option.value}`} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
                           </select>
                           <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-blue-600">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -199,6 +323,7 @@ export default function HeroSection() {
                 
                 {/* Search Button */}
                 <button 
+                  onClick={handleSearch}
                   className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 font-medium text-sm transition-all flex items-center justify-center relative overflow-hidden group shadow-md"
                 >
                   <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-400 to-blue-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>

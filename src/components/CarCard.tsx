@@ -18,6 +18,9 @@ interface CarCardProps {
     vehicleTransmission?: string;
     bodyType?: string;
     offerType: string;
+    stockNumber?: string;
+    isFeatured?: boolean;
+    section?: string;
   };
   isFeatured?: boolean;
 }
@@ -84,11 +87,26 @@ const CarCard: React.FC<CarCardProps> = ({ car, isFeatured = false }) => {
           </div>
         )}
         
-        {/* Status badge - show the actual status instead of just "Featured" */}
-        <div className="absolute top-2 left-2">
+        {/* Status badges */}
+        <div className="absolute top-2 left-2 flex flex-col gap-1">
+          {/* Availability Status badge */}
           <span className={`${getStatusBadgeColor()} text-white text-xs font-bold px-2 py-1 rounded`}>
             {car.offerType}
           </span>
+          
+          {/* Featured badge */}
+          {car.isFeatured && (
+            <span className="bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded">
+              Featured
+            </span>
+          )}
+          
+          {/* Popular badge */}
+          {car.section === 'popular' && (
+            <span className="bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded">
+              Popular
+            </span>
+          )}
         </div>
         
         {/* "Sold" overlay - keep this for better visual indication */}
@@ -104,6 +122,12 @@ const CarCard: React.FC<CarCardProps> = ({ car, isFeatured = false }) => {
       <div className="p-3">
         <h3 className="text-sm font-bold truncate text-black">{car.title}</h3>
         <p className="text-black/70 text-xs mb-1">{getCarSubtitle()}</p>
+        
+        {/* Add stock number display */}
+        {car.stockNumber && (
+          <p className="text-gray-500 text-xs mb-1">Stock #: {car.stockNumber}</p>
+        )}
+        
         <div className="flex justify-between items-center">
           <span className="text-red-600 font-bold">{formatPrice(car.price, car.priceCurrency)}</span>
           <Link href={`/cars/${car._id}`} className="text-xs text-blue-600 hover:underline">

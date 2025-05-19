@@ -4,49 +4,24 @@ import { Metadata } from 'next';
 import ContactForm from '@/components/cars/ContactForm';
 import PageTemplate from '@/components/PageTemplate';
 import CarImageGallery from '@/components/cars/CarImageGallery';
+import connectDB from '@/lib/mongodb';
+import CarListing from '@/models/Car';
 
 export const metadata: Metadata = {
   title: 'Car Details | AutoElite',
   description: 'View detailed information about this vehicle including specifications, features, and pricing.',
 };
 
-// This would normally come from a database
+// Fetch car from database
 const getCar = async (id: string) => {
-  const cars = [
-    {
-      id: 1,
-      make: 'Toyota',
-      model: 'Camry',
-      year: 2023,
-      price: 32500,
-      mileage: 15,
-      fuelType: 'Gasoline',
-      transmission: 'Automatic',
-      images: [
-        '/cars/car1.jpg',
-        '/cars/car2.jpg',
-        '/cars/car3.jpg',
-        '/cars/car4.jpg',
-        '/cars/car5.jpg'
-      ],
-      features: ['Bluetooth', 'Backup Camera', 'Navigation', 'Heated Seats', 'Sunroof', 'Leather Interior'],
-      bodyType: 'Sedan',
-      condition: 'New',
-      description: 'Experience the perfect blend of comfort, style, and efficiency with the latest Toyota Camry. This elegant sedan offers exceptional fuel economy, advanced safety features, and a smooth driving experience. The spacious interior and modern technology make it ideal for both daily commutes and long journeys.',
-      specs: {
-        engine: '2.5L 4-Cylinder',
-        horsepower: '203 hp',
-        torque: '184 lb-ft',
-        mpg: '28 city / 39 highway',
-        drivetrain: 'Front-Wheel Drive',
-        seats: 5,
-        doors: 4,
-        color: 'Silver'
-      }
-    }
-  ];
-  
-  return cars.find(car => car.id === parseInt(id)) || null;
+  try {
+    await connectDB();
+    const car = await CarListing.findById(id);
+    return car ? JSON.parse(JSON.stringify(car)) : null;
+  } catch (error) {
+    console.error('Error fetching car details:', error);
+    return null;
+  }
 };
 
 export default async function CarDetailsPage({ params }: { params: { id: string } }) {
@@ -93,6 +68,34 @@ export default async function CarDetailsPage({ params }: { params: { id: string 
     { label: `${car.year} ${car.make} ${car.model}`, href: `/cars/${resolvedParams.id}` }
   ];
   
+  // Prepare car specifications
+  const specs = {
+    'Stock Number': car.stockNumber || 'Not specified',
+    'Make': car.make || 'Not specified',
+    'Model': car.model || 'Not specified',
+    'Year': car.year || 'Not specified',
+    'Mileage': car.mileage ? `${car.mileage} ${car.mileageUnit || 'KM'}` : 'Not specified',
+    'Condition': car.itemCondition || 'Used',
+    'Availability': car.offerType || 'In Stock',
+    'VIN': car.vin || 'Not specified',
+    'Body Type': car.bodyType || 'Not specified',
+    'Color': car.color || 'Not specified',
+    // 'Drive Wheel': car.driveWheelConfiguration || 'Not specified',
+    // 'Doors': car.numberOfDoors || 'Not specified',
+    'Fuel Type': car.fuelType || 'Not specified',
+    // 'Engine': car.vehicleEngine || 'Not specified',
+    'Seating': car.vehicleSeatingCapacity || 'Not specified',
+    'Transmission': car.vehicleTransmission || 'Not specified',
+    // 'Cylinders': car.cylinders || 'Not specified',
+    // 'Country': car.country || 'Not specified',
+    // 'Category': car.category || 'Not specified'
+  };
+  
+  // Ensure we have an array of images
+  const images = car.images && car.images.length 
+    ? car.images 
+    : (car.image ? [car.image] : ['/images/car-placeholder.svg']);
+  
   return (
     <PageTemplate
       customBreadcrumbs={customBreadcrumbs}
@@ -102,10 +105,10 @@ export default async function CarDetailsPage({ params }: { params: { id: string 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold text-black">{car.year} {car.make} {car.model}</h1>
-          <p className="text-black/70">{car.bodyType} • {car.transmission} • {car.mileage} miles</p>
+          <p className="text-black/70">{car.bodyType} • {car.vehicleTransmission} • {car.mileage} miles</p>
         </div>
         <div className="mt-4 md:mt-0">
-          <span className="text-3xl font-bold text-red-600">${car.price.toLocaleString()}</span>
+          <span className="text-3xl font-bold text-red-600">${car.price?.toLocaleString() || 'Call for price'}</span>
         </div>
       </div>
       
@@ -114,7 +117,7 @@ export default async function CarDetailsPage({ params }: { params: { id: string 
         <div className="w-full lg:w-2/3">
           {/* Image Gallery */}
           <CarImageGallery 
-            images={car.images} 
+            images={images} 
             alt={`${car.year} ${car.make} ${car.model}`} 
           />
           
@@ -123,20 +126,20 @@ export default async function CarDetailsPage({ params }: { params: { id: string 
             <div className="border-b border-black/10">
               <div className="flex overflow-x-auto">
                 <button className="px-4 py-2 border-b-2 border-red-600 font-medium text-red-600">Overview</button>
-                <button className="px-4 py-2 border-b-2 border-transparent font-medium text-black/70 hover:text-blue-600">Specifications</button>
-                <button className="px-4 py-2 border-b-2 border-transparent font-medium text-black/70 hover:text-blue-600">Features</button>
+                {/* <button className="px-4 py-2 border-b-2 border-transparent font-medium text-black/70 hover:text-blue-600">Specifications</button>
+                <button className="px-4 py-2 border-b-2 border-transparent font-medium text-black/70 hover:text-blue-600">Features</button> */}
               </div>
             </div>
             
             <div className="py-6">
               <h2 className="text-2xl font-bold text-black mb-4">Description</h2>
-              <p className="text-black/80 mb-6">{car.description}</p>
+              <p className="text-black/80 mb-6">{car.description || 'No description available for this vehicle.'}</p>
               
               <h2 className="text-2xl font-bold text-black mb-4">Specifications</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                {Object.entries(car.specs).map(([key, value]) => (
+                {Object.entries(specs).map(([key, value]) => (
                   <div key={key} className="flex justify-between p-3 bg-blue-50 rounded">
-                    <span className="font-medium capitalize text-black">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                    <span className="font-medium text-black">{key}</span>
                     <span className="text-black/80">{value}</span>
                   </div>
                 ))}
@@ -144,7 +147,7 @@ export default async function CarDetailsPage({ params }: { params: { id: string 
               
               <h2 className="text-2xl font-bold text-black mb-4">Features</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {car.features.map(feature => (
+                {(car.carFeature || []).map((feature: string) => (
                   <div key={feature} className="flex items-center gap-2">
                     <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -152,6 +155,11 @@ export default async function CarDetailsPage({ params }: { params: { id: string 
                     <span className="text-black/80">{feature}</span>
                   </div>
                 ))}
+                
+                {/* If no features are specified, show a message */}
+                {(!car.carFeature || car.carFeature.length === 0) && (
+                  <div className="col-span-3 text-black/70 italic">No specific features listed for this vehicle.</div>
+                )}
               </div>
             </div>
           </div>
@@ -161,35 +169,12 @@ export default async function CarDetailsPage({ params }: { params: { id: string 
         <div className="w-full lg:w-1/3">
           <div className="bg-white p-6 rounded-md border border-black/10 sticky top-24">
             <h2 className="text-xl font-bold text-black mb-4">Interested in this car?</h2>
-            <ContactForm carId={car.id} carName={`${car.year} ${car.make} ${car.model}`} />
+            <ContactForm carId={car._id} carName={`${car.year} ${car.make} ${car.model}`} />
           </div>
         </div>
       </div>
       
-      {/* Similar Cars */}
-      <div className="mt-12">
-        <h2 className="text-2xl font-bold text-black mb-6">Similar Vehicles</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* This would be a component with actual similar cars */}
-          {[1, 2, 3].map((item) => (
-            <div key={item} className="bg-white rounded-md overflow-hidden border border-black/10 hover:shadow-md transition-shadow">
-              <Link href={`/cars/${item}`}>
-                <div className="relative h-48 w-full">
-                  <div className="bg-black/5 h-full w-full" />
-                </div>
-                <div className="p-4">
-                  <h3 className="text-lg font-bold text-black">Similar Car {item}</h3>
-                  <p className="text-black/70 text-sm">2023 • Sedan • Automatic</p>
-                  <div className="flex justify-between items-center mt-2">
-                    <span className="text-xl font-bold text-red-600">$32,500</span>
-                  </div>
-                </div>
-              </Link>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* We'll replace the Similar Cars section with actual data in a future update */}
     </PageTemplate>
   );
 } 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
+import { PERMISSIONS } from '@/models/UserConstants';
 
 const JWT_SECRET = process.env.JWT_SECRET || '07f9a791f63910f006f45c1c4570fed662f0b6e5ff888100bb678c0d3a08541b';
 const JWT_EXPIRY = '7d'; // token valid for 7 days
@@ -9,14 +10,15 @@ interface TokenPayload {
   userId: string;
   email: string;
   role: string;
+  permissions: string[];
 }
 
 /**
  * Generate a JWT token for a user
  */
-export const generateToken = (userId: string, email: string, role: string): string => {
+export const generateToken = (userId: string, email: string, role: string, permissions: string[] = []): string => {
   return jwt.sign(
-    { userId, email, role },
+    { userId, email, role, permissions },
     JWT_SECRET,
     { expiresIn: JWT_EXPIRY }
   );
@@ -121,4 +123,52 @@ export const adminMiddleware = async (request: NextRequest) => {
   }
   
   return null; // No error, proceed
+};
+
+/**
+ * Permission-based middleware for API routes
+ */
+export const permissionMiddleware = (requiredPermissions: string | string[]) => {
+  return async (request: NextRequest) => {
+    const token = getTokenFromRequest(request);
+    
+    if (!token) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+    
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      return NextResponse.json(
+        { error: 'Invalid or expired token' },
+        { status: 401 }
+      );
+    }
+    
+    // Admin role has all permissions
+    if (decoded.role === 'admin') {
+      return null; // No error, proceed
+    }
+    
+    // Check permissions
+    const permissionsToCheck = Array.isArray(requiredPermissions) 
+      ? requiredPermissions 
+      : [requiredPermissions];
+    
+    // Check if user has any of the required permissions
+    const hasPermission = permissionsToCheck.some(permission => 
+      decoded.permissions.includes(permission)
+    );
+    
+    if (!hasPermission) {
+      return NextResponse.json(
+        { error: 'Permission denied' },
+        { status: 403 }
+      );
+    }
+    
+    return null; // No error, proceed
+  };
 }; 

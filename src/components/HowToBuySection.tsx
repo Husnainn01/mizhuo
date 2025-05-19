@@ -3,13 +3,12 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 
-// Animation variants for staggered children
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2
+      staggerChildren: 0.15
     }
   }
 };
@@ -29,126 +28,98 @@ const itemVariants = {
 
 export default function HowToBuySection() {
   return (
-    <section className="py-16 bg-white">
+    <section className="py-20 bg-gradient-to-b from-white to-gray-50">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-3">How to Buy Your Dream Car</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+            How to Buy Your Dream Car
+          </h2>
+          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
             At AutoElite, we've made the car buying process simple and straightforward. Follow these easy steps to drive home in your perfect vehicle.
           </p>
         </div>
         
         <motion.div 
-          className="relative"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
         >
-          {/* Timeline line */}
-          <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-blue-100 z-0"></div>
-          
           {/* Step 1 */}
-          <motion.div variants={itemVariants} className="relative z-10 flex flex-col md:flex-row items-center mb-12">
-            <div className="order-1 md:w-5/12 md:text-right md:pr-10">
-              <h3 className="text-xl font-bold mb-2 text-blue-700">Browse Our Inventory</h3>
+          <motion.div 
+            variants={itemVariants}
+            className="group bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-full transform translate-x-8 -translate-y-8 group-hover:bg-blue-100 transition-colors duration-300"></div>
+            <div className="relative z-10">
+              <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold mb-4 group-hover:scale-110 transition-transform duration-300">
+                1
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-gray-800">Check Our Inventory</h3>
               <p className="text-gray-600">
-                Explore our extensive collection of premium vehicles online or visit our showroom to see them in person.
+                Browse our extensive collection of premium vehicles online. Use our smart filters to find your perfect match.
               </p>
             </div>
-            <div className="order-2 rounded-full w-12 h-12 bg-blue-600 flex items-center justify-center text-white font-bold my-4 md:my-0 z-10">1</div>
-            <div className="order-3 md:w-5/12 md:pl-10">
-              <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
-                <p className="text-sm text-blue-800">
-                  "I found the exact model I was looking for within minutes using their easy search filters!"
-                </p>
-                <p className="text-xs text-blue-700 mt-2">- Sarah K.</p>
-              </div>
-            </div>
           </motion.div>
-          
+
           {/* Step 2 */}
-          <motion.div variants={itemVariants} className="relative z-10 flex flex-col md:flex-row-reverse items-center mb-12">
-            <div className="order-1 md:w-5/12 md:text-left md:pl-10">
-              <h3 className="text-xl font-bold mb-2 text-blue-700">Schedule a Test Drive</h3>
+          <motion.div 
+            variants={itemVariants}
+            className="group bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-full transform translate-x-8 -translate-y-8 group-hover:bg-blue-100 transition-colors duration-300"></div>
+            <div className="relative z-10">
+              <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold mb-4 group-hover:scale-110 transition-transform duration-300">
+                2
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-gray-800">Select Your Car</h3>
               <p className="text-gray-600">
-                Experience your selected vehicle firsthand by booking a test drive online or by phone.
+                Choose your dream vehicle with detailed specifications and high-quality photos to make an informed decision.
               </p>
             </div>
-            <div className="order-2 rounded-full w-12 h-12 bg-blue-600 flex items-center justify-center text-white font-bold my-4 md:my-0 z-10">2</div>
-            <div className="order-3 md:w-5/12 md:pr-10 md:text-right">
-              <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
-                <p className="text-sm text-blue-800">
-                  "The staff was accommodating and patient during my test drive, answering all my questions."
-                </p>
-                <p className="text-xs text-blue-700 mt-2">- Michael R.</p>
-              </div>
-            </div>
           </motion.div>
-          
+
           {/* Step 3 */}
-          <motion.div variants={itemVariants} className="relative z-10 flex flex-col md:flex-row items-center mb-12">
-            <div className="order-1 md:w-5/12 md:text-right md:pr-10">
-              <h3 className="text-xl font-bold mb-2 text-blue-700">Financing Options</h3>
+          <motion.div 
+            variants={itemVariants}
+            className="group bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-full transform translate-x-8 -translate-y-8 group-hover:bg-blue-100 transition-colors duration-300"></div>
+            <div className="relative z-10">
+              <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold mb-4 group-hover:scale-110 transition-transform duration-300">
+                3
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-gray-800">Contact Us</h3>
               <p className="text-gray-600">
-                Our finance experts will help you find the best payment plan that fits your budget and needs.
+                Reach out to our team through multiple channels. We'll handle all payment and documentation details.
               </p>
             </div>
-            <div className="order-2 rounded-full w-12 h-12 bg-blue-600 flex items-center justify-center text-white font-bold my-4 md:my-0 z-10">3</div>
-            <div className="order-3 md:w-5/12 md:pl-10">
-              <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
-                <p className="text-sm text-blue-800">
-                  "The financing process was smooth and transparent. Got a great interest rate!"
-                </p>
-                <p className="text-xs text-blue-700 mt-2">- Jennifer T.</p>
-              </div>
-            </div>
           </motion.div>
-          
+
           {/* Step 4 */}
-          <motion.div variants={itemVariants} className="relative z-10 flex flex-col md:flex-row-reverse items-center mb-12">
-            <div className="order-1 md:w-5/12 md:text-left md:pl-10">
-              <h3 className="text-xl font-bold mb-2 text-blue-700">Complete Your Purchase</h3>
-              <p className="text-gray-600">
-                Finalize your purchase with our streamlined paperwork process and drive home in your new car.
-              </p>
-            </div>
-            <div className="order-2 rounded-full w-12 h-12 bg-blue-600 flex items-center justify-center text-white font-bold my-4 md:my-0 z-10">4</div>
-            <div className="order-3 md:w-5/12 md:pr-10 md:text-right">
-              <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
-                <p className="text-sm text-blue-800">
-                  "From initial contact to driving away, the whole process took just a few hours. So efficient!"
-                </p>
-                <p className="text-xs text-blue-700 mt-2">- Robert L.</p>
+          <motion.div 
+            variants={itemVariants}
+            className="group bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-full transform translate-x-8 -translate-y-8 group-hover:bg-blue-100 transition-colors duration-300"></div>
+            <div className="relative z-10">
+              <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold mb-4 group-hover:scale-110 transition-transform duration-300">
+                4
               </div>
-            </div>
-          </motion.div>
-          
-          {/* Step 5 */}
-          <motion.div variants={itemVariants} className="relative z-10 flex flex-col md:flex-row items-center">
-            <div className="order-1 md:w-5/12 md:text-right md:pr-10">
-              <h3 className="text-xl font-bold mb-2 text-blue-700">After-Sales Support</h3>
+              <h3 className="text-xl font-bold mb-3 text-gray-800">We Ship Your Car</h3>
               <p className="text-gray-600">
-                Enjoy our comprehensive after-sales service including maintenance, warranty coverage, and more.
+                Enjoy stress-free delivery as we handle all logistics and ensure your car arrives safely at your location.
               </p>
-            </div>
-            <div className="order-2 rounded-full w-12 h-12 bg-blue-600 flex items-center justify-center text-white font-bold my-4 md:my-0 z-10">5</div>
-            <div className="order-3 md:w-5/12 md:pl-10">
-              <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
-                <p className="text-sm text-blue-800">
-                  "The service department has been fantastic. Regular maintenance is quick and reasonably priced."
-                </p>
-                <p className="text-xs text-blue-700 mt-2">- Emily W.</p>
-              </div>
             </div>
           </motion.div>
         </motion.div>
         
         {/* CTA Button */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-16">
           <Link 
             href="/cars" 
-            className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-md font-medium transition-colors"
+            className="inline-block bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white px-8 py-4 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
           >
             Start Your Car Buying Journey
           </Link>

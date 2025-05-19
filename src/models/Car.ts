@@ -64,6 +64,11 @@ const CarSchema = new mongoose.Schema({
   driveType: String,
   country: String,
   category: String,
+  isFeatured: {
+    type: Boolean,
+    default: false,
+    index: true
+  },
   section: {
     type: String,
     enum: ['recent', 'popular'],

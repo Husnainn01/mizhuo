@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 interface ContactFormProps {
-  carId: number;
+  carId: number | string;
   carName: string;
 }
 
@@ -29,26 +29,53 @@ const ContactForm = ({ carId, carName }: ContactFormProps) => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setFormStatus({ type: null, message: '' });
     
-    // Mock form submission - in a real app, this would call the API
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setFormStatus({
-        type: 'success',
-        message: 'Thank you! Your inquiry has been sent. We will contact you shortly.'
+    try {
+      const response = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          carId: carId.toString(),
+        }),
       });
       
-      // Reset form after successful submission (except pre-filled message)
-      setFormData(prev => ({
-        name: '',
-        email: '',
-        phone: '',
-        message: prev.message
-      }));
-    }, 1000);
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        setFormStatus({
+          type: 'success',
+          message: 'Thank you! Your inquiry has been sent. We will contact you shortly.'
+        });
+        
+        // Reset form after successful submission (except pre-filled message)
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          message: formData.message
+        });
+      } else {
+        setFormStatus({
+          type: 'error',
+          message: data.error || 'Failed to submit inquiry. Please try again.'
+        });
+      }
+    } catch (error) {
+      console.error('Error submitting inquiry:', error);
+      setFormStatus({
+        type: 'error',
+        message: 'An unexpected error occurred. Please try again later.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -65,6 +92,12 @@ const ContactForm = ({ carId, carName }: ContactFormProps) => {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
+          {formStatus.type === 'error' && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-md mb-2">
+              <p className="text-red-600 text-sm">{formStatus.message}</p>
+            </div>
+          )}
+          
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-black mb-1">
               Full Name*

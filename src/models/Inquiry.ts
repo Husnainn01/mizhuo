@@ -19,7 +19,7 @@ const InquirySchema = new mongoose.Schema({
   message: { type: String, required: true },
   carId: { 
     type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Car',
+    ref: 'CarListing',
     required: false
   },
   status: { 
@@ -37,7 +37,7 @@ InquirySchema.index({ status: 1 });
 InquirySchema.index({ carId: 1 });
 InquirySchema.index({ createdAt: -1 });
 
-// Check if model exists already
+// Check if model exists already to prevent model overwrite error
 const Inquiry = mongoose.models.Inquiry || mongoose.model('Inquiry', InquirySchema);
 
 export default Inquiry; 

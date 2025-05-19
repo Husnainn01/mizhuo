@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { PERMISSIONS } from '@/models/UserConstants';
 
 // Add debugging
 function logMiddleware(message: string, ...args: any[]) {
@@ -33,6 +34,24 @@ const validateToken = (token: string): any => {
     logMiddleware('Token validation failed:', error);
     return null;
   }
+};
+
+// Get access level based on role and permissions
+const getAccessLevel = (role: string, permissions: string[] = []): 'admin' | 'editor' | 'viewer' | 'none' => {
+  if (role === 'admin') return 'admin';
+  if (role === 'editor') return 'editor';
+  if (role === 'viewer') return 'viewer';
+  
+  // Check permissions for custom roles
+  if (permissions.includes('create:car') || permissions.includes('update:car')) {
+    return 'editor';
+  }
+  
+  if (permissions.includes('read:car')) {
+    return 'viewer';
+  }
+  
+  return 'none';
 };
 
 // This function can be marked `async` if using `await` inside
@@ -70,21 +89,49 @@ export function middleware(request: NextRequest) {
     // Validate the token using Edge-compatible approach
     const payload = validateToken(token);
     
-    // If token is invalid or not an admin, redirect to login
-    if (!payload || payload.role !== 'admin') {
-      logMiddleware('Invalid token or not admin, redirecting to login');
-      // Redirect to login
+    // If token is invalid, redirect to login
+    if (!payload) {
+      logMiddleware('Invalid token, redirecting to login');
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
     
-    logMiddleware('Valid admin token, allowing access to: ' + path);
+    // Check role and permissions
+    const role = payload.role || 'user';
+    const permissions = payload.permissions || [];
+    const accessLevel = getAccessLevel(role, permissions);
+    logMiddleware(`User access level: ${accessLevel}`);
+    
+    // Restricted paths that require specific access levels
+    const adminOnlyPaths = ['/admin/users'];
+    const editorPaths = ['/admin/cars/add', '/admin/cars/edit', '/admin/attributes/*/add', '/admin/attributes/*/edit'];
+    
+    // Check for admin-only paths
+    if (adminOnlyPaths.some(p => path.startsWith(p)) && accessLevel !== 'admin') {
+      logMiddleware('Access denied for admin-only path');
+      return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+    }
+    
+    // Check for editor paths
+    if (editorPaths.some(p => {
+      // Handle wildcard paths
+      if (p.includes('*')) {
+        const regex = new RegExp(p.replace('*', '.*'));
+        return regex.test(path);
+      }
+      return path.startsWith(p);
+    }) && accessLevel !== 'admin' && accessLevel !== 'editor') {
+      logMiddleware('Access denied for editor path');
+      return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+    }
+    
+    logMiddleware('Access granted for path: ' + path);
   }
   
   // If it's the login path and we have a valid token, redirect to dashboard
   if (isPublicPath && token) {
     const payload = validateToken(token);
     
-    if (payload && payload.role === 'admin') {
+    if (payload) {
       logMiddleware('Already logged in, redirecting from login to dashboard');
       // Redirect to dashboard
       return NextResponse.redirect(new URL('/admin/dashboard', request.url));
