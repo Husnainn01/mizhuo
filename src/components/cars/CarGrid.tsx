@@ -20,7 +20,7 @@ interface Car {
   itemCondition: string;
   images: string[];
   image: string;
-  [key: string]: any;
+  [key: string]: string | number | string[] | boolean; // More specific index signature
 }
 
 // Define Pagination interface
@@ -83,9 +83,10 @@ const CarGrid = () => {
         
         setCars(data.cars);
         setPagination(data.pagination);
-      } catch (err: any) {
-        setError(err.message);
-        console.error('Error fetching cars:', err);
+      } catch (err: unknown) {
+        const error = err as Error;
+        setError(error.message);
+        console.error('Error fetching cars:', error);
       } finally {
         setIsLoading(false);
       }

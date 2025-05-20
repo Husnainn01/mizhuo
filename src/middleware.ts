@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { PERMISSIONS } from '@/models/UserConstants';
 
 // Add debugging
 function logMiddleware(message: string, ...args: unknown[]): void {

@@ -25,7 +25,7 @@ export default function HowToBuyHero() {
             </span>
           </h1>
           <p className="mx-auto mb-8 max-w-2xl text-lg text-gray-600 md:text-xl">
-            We've simplified the car buying process to make your experience smooth and enjoyable. 
+            We&apos;ve simplified the car buying process to make your experience smooth and enjoyable. 
             Follow our step-by-step guide to find and purchase your dream car with confidence.
           </p>
           <motion.div

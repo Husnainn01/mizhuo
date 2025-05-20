@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
-import { PERMISSIONS } from '@/models/UserConstants';
 
 const JWT_SECRET = process.env.JWT_SECRET || '07f9a791f63910f006f45c1c4570fed662f0b6e5ff888100bb678c0d3a08541b';
 const JWT_EXPIRY = '7d'; // token valid for 7 days

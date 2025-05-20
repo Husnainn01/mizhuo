@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useDebounce } from '@/hooks/useDebounce';
 
@@ -147,36 +147,8 @@ const SearchFilters = () => {
     }
   }, [selectedMake]);
   
-  // Update URL when search term changes
-  useEffect(() => {
-    if (debouncedSearch !== searchParams.get('search')) {
-      applyFilters();
-    }
-  }, [debouncedSearch]);
-  
-  // Toggle section expansion/collapse
-  const toggleSection = (section: keyof typeof isOpen) => {
-    setIsOpen(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
-  };
-  
-  // Handle checkbox change for array filters
-  const handleCheckboxChange = (
-    value: string, 
-    selectedValues: string[], 
-    setSelectedValues: React.Dispatch<React.SetStateAction<string[]>>
-  ) => {
-    if (selectedValues.includes(value)) {
-      setSelectedValues(selectedValues.filter(v => v !== value));
-    } else {
-      setSelectedValues([...selectedValues, value]);
-    }
-  };
-  
   // Apply filters to URL
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     const params = new URLSearchParams();
     
     // Add single value filters
@@ -200,8 +172,48 @@ const SearchFilters = () => {
     const sort = searchParams.get('sort');
     if (sort) params.set('sort', sort);
     
-    // Update URL
     router.push(`/cars?${params.toString()}`);
+  }, [
+    search,
+    selectedMake,
+    minPrice,
+    maxPrice,
+    minYear,
+    maxYear,
+    selectedModels,
+    selectedBodyTypes,
+    selectedFuelTypes,
+    selectedFeatures,
+    searchParams,
+    router
+  ]);
+  
+  // Update URL when search term changes
+  useEffect(() => {
+    if (debouncedSearch !== searchParams.get('search')) {
+      applyFilters();
+    }
+  }, [debouncedSearch, searchParams, applyFilters]);
+  
+  // Toggle section expansion/collapse
+  const toggleSection = (section: keyof typeof isOpen) => {
+    setIsOpen(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+  
+  // Handle checkbox change for array filters
+  const handleCheckboxChange = (
+    value: string, 
+    selectedValues: string[], 
+    setSelectedValues: React.Dispatch<React.SetStateAction<string[]>>
+  ) => {
+    if (selectedValues.includes(value)) {
+      setSelectedValues(selectedValues.filter(v => v !== value));
+    } else {
+      setSelectedValues([...selectedValues, value]);
+    }
   };
   
   // Clear all filters
