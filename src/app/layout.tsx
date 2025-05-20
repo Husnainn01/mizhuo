@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AutoElite - Car Dealership",
-  description: "Find your perfect vehicle at AutoElite, your trusted car dealership with a wide selection of premium cars.",
+  title: "AutoElite: Japanese Used Cars for Sale",
+  description: "Browse premium Japanese used cars for sale. Quality vehicles at competitive prices.",
 };
 
 export default function RootLayout({
@@ -15,8 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body suppressHydrationWarning className={inter.className}>
+    <html lang="en">
+      <body className={inter.className}>
         {children}
       </body>
     </html>

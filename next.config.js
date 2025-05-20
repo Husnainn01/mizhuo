@@ -10,7 +10,6 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   output: 'standalone',
-  // Disable static export
   experimental: {
     // Optimize package imports
     optimizePackageImports: ['framer-motion'],
@@ -19,6 +18,7 @@ const nextConfig = {
   trailingSlash: true,
   // External packages for server components
   serverExternalPackages: [],
+  poweredByHeader: false,
 }
 
 module.exports = nextConfig 
