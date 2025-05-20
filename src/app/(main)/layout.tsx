@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import InfoBar from "@/components/InfoBar";
 import { Inter } from "next/font/google";
 
+// Using Inter font but not applying it directly for more flexibility
 const inter = Inter({ subsets: ["latin"] });
 
 export default function MainLayout({
