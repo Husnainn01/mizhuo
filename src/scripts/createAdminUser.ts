@@ -2,8 +2,6 @@ import mongoose from 'mongoose';
 import User from '../models/User';
 import connectDB from '../lib/mongodb';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://mizhuo:Gf3pcTkgWPpROHE1@mizhuolimited.eywpszi.mongodb.net/mizhuo';
-
 // Admin user details
 const adminUser = {
   firstName: 'Admin',

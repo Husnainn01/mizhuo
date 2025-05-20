@@ -9,6 +9,7 @@ import HowToBuySection from "@/components/HowToBuySection";
 import CallToActionSection from "@/components/CallToActionSection";
 import FeaturedCarsSection from "@/components/FeaturedCarsSection";
 import HeroSection from "@/components/HeroSection";
+import InfoBar from "@/components/InfoBar";
 
 // Animation variants for staggered children
 const containerVariants = {
@@ -60,6 +61,7 @@ export default function Home() {
 
   return (
     <>
+      <InfoBar />
       <div className="flex flex-col min-h-screen w-full bg-white">
         <Navigation />
         <main className="flex-grow w-full">

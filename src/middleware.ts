@@ -3,12 +3,12 @@ import type { NextRequest } from 'next/server';
 import { PERMISSIONS } from '@/models/UserConstants';
 
 // Add debugging
-function logMiddleware(message: string, ...args: any[]) {
+function logMiddleware(message: string, ...args: unknown[]): void {
   console.log(`[Middleware] ${message}`, ...args);
 }
 
 // Simple token validation function compatible with Edge Runtime
-const validateToken = (token: string): any => {
+const validateToken = (token: string): TokenPayload | null => {
   try {
     // In Edge Runtime, we can't use jwt.verify
     // Instead, we'll do basic validation and extract the payload
@@ -19,7 +19,7 @@ const validateToken = (token: string): any => {
     }
     
     // Base64 decode the payload (middle part)
-    const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+    const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString()) as TokenPayload;
     logMiddleware('Token payload extracted:', payload);
     
     // Check if token is expired
@@ -30,11 +30,17 @@ const validateToken = (token: string): any => {
     }
     
     return payload;
-  } catch (error) {
-    logMiddleware('Token validation failed:', error);
+  } catch {
+    logMiddleware('Token validation failed');
     return null;
   }
 };
+
+interface TokenPayload {
+  exp?: number;
+  role?: string;
+  permissions?: string[];
+}
 
 // Get access level based on role and permissions
 const getAccessLevel = (role: string, permissions: string[] = []): 'admin' | 'editor' | 'viewer' | 'none' => {

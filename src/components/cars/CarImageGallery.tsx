@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode, Navigation, Thumbs, Pagination } from 'swiper/modules';
+import type { Swiper as SwiperType } from 'swiper';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -18,7 +19,7 @@ interface CarImageGalleryProps {
 }
 
 const CarImageGallery = ({ images, alt }: CarImageGalleryProps) => {
-  const [thumbsSwiper, setThumbsSwiper] = useState<any>(null);
+  const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
   const [showThumbnails, setShowThumbnails] = useState(true);
   
   if (!images || images.length === 0) {

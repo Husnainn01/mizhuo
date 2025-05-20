@@ -15,8 +15,8 @@ const Footer = () => {
   return (
     <footer className="bg-gradient-to-b from-gray-900 to-black text-white relative overflow-hidden">
       {/* Decorative Elements */}
-      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[length:20px_20px]" />
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
+      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[length:20px_20px] pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent pointer-events-none" />
       
       <div className="container mx-auto px-4 py-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
@@ -26,7 +26,7 @@ const Footer = () => {
             className="space-y-4"
           >
             <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-blue-300 bg-clip-text text-transparent">
-              AutoElite
+              Mizhuo Limited Trading
             </h3>
             <p className="text-gray-400 text-sm leading-relaxed">
               Your trusted destination for quality vehicles. We provide a seamless car buying experience with a wide selection of premium cars.
@@ -81,7 +81,7 @@ const Footer = () => {
                 ['FAQ', '/faq'],
                 ['Terms & Conditions', '/terms'],
                 ['Privacy Policy', '/privacy'],
-                ['Financing Options', '/financing'],
+                // ['Financing Options', '/financing'],
                 ['Support', '/support']
               ].map(([title, path]) => (
                 <li key={path}>
@@ -101,40 +101,36 @@ const Footer = () => {
           <motion.div {...fadeInUp} className="space-y-4">
             <h3 className="text-lg font-semibold text-white/90">Contact Us</h3>
             <ul className="space-y-3 text-sm">
-              {[
-                {
-                  icon: (
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                  ),
-                  text: '123 Car Street, Auto City, AC 12345'
-                },
-                {
-                  icon: (
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                </svg>
-                  ),
-                  text: '(555) 123-4567'
-                },
-                {
-                  icon: (
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                  ),
-                  text: 'info@autoelite.com'
-                }
-              ].map((item, index) => (
-                <li key={index} className="flex items-center space-x-3 text-gray-400 group">
-                  <span className="p-2 bg-white/5 rounded-lg group-hover:bg-white/10 transition-colors duration-300">
-                    {item.icon}
-                  </span>
-                  <span className="group-hover:text-blue-400 transition-colors duration-300">{item.text}</span>
+              <li className="flex items-center space-x-3 text-gray-400 group">
+                <span className="p-2 bg-white/5 rounded-lg group-hover:bg-white/10 transition-colors duration-300">
+                  {/* Address Icon */}
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </span>
+                <span className="group-hover:text-blue-400 transition-colors duration-300">
+                  Isshiki Oiricho,<br />Konan, Aichi 483-8010,<br />Japan
+                </span>
               </li>
-              ))}
+              <li className="flex items-center space-x-3 text-gray-400 group">
+                <span className="p-2 bg-white/5 rounded-lg group-hover:bg-white/10 transition-colors duration-300">
+                  {/* Phone Icon */}
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                </span>
+                <a href="tel:+819040995575" className="group-hover:text-blue-400 transition-colors duration-300">+81-90-4099-5575</a>
+              </li>
+              <li className="flex items-center space-x-3 text-gray-400 group">
+                <span className="p-2 bg-white/5 rounded-lg group-hover:bg-white/10 transition-colors duration-300">
+                  {/* Email Icon */}
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </span>
+                <a href="mailto:csd@mizhuolimitedtrading.com" className="group-hover:text-blue-400 transition-colors duration-300">csd@mizhuolimitedtrading.com</a>
+              </li>
             </ul>
           </motion.div>
         </div>
@@ -144,9 +140,9 @@ const Footer = () => {
           {...fadeInUp}
           className="border-t border-white/10 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400"
         >
-          <p>&copy; {currentYear} AutoElite. All rights reserved.</p>
+          <p>&copy; {currentYear} Mizhuo Limited Trading. All rights reserved.</p>
           <p className="mt-2 md:mt-0">
-            Designed with <span className="text-blue-500">❤️</span> for car enthusiasts
+            Designed with <span className="text-blue-500">❤️</span>
           </p>
         </motion.div>
       </div>

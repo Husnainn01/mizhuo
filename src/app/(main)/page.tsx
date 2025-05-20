@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-
+import InfoBar from "@/components/InfoBar";
 // Animation variants for staggered children
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -189,6 +189,7 @@ export default function Home() {
 
   return (
     <>
+      <InfoBar />
       <main className="flex min-h-screen flex-col relative">
         {/* Hero Section */}
         <section className="relative w-full h-[600px]">

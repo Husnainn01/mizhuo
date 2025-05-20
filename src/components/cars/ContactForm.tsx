@@ -42,7 +42,7 @@ const ContactForm = ({ carId, carName }: ContactFormProps) => {
         },
         body: JSON.stringify({
           ...formData,
-          carId: carId.toString(),
+          carId,
         }),
       });
       
