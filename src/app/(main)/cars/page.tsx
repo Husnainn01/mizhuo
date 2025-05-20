@@ -1,11 +1,12 @@
 'use client';
 
+import { Suspense } from 'react';
 import SearchFilters from '@/components/cars/SearchFilters';
 import CarGrid from '@/components/cars/CarGrid';
 import PageTemplate from '@/components/PageTemplate';
 import { motion } from 'framer-motion';
 
-export default function CarsPage() {
+function CarsContent() {
   // Animation variants
   const pageVariants = {
     hidden: { opacity: 0 },
@@ -58,5 +59,13 @@ export default function CarsPage() {
         </div>
       </PageTemplate>
     </motion.div>
+  );
+}
+
+export default function CarsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CarsContent />
+    </Suspense>
   );
 } 

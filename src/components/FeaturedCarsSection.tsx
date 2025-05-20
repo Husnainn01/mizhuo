@@ -42,9 +42,9 @@ export default function FeaturedCarsSection() {
         } else {
           throw new Error(data.error || 'Failed to fetch featured cars');
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error fetching featured cars:', err);
-        setError(err.message || 'An error occurred while fetching featured cars');
+        setError(err instanceof Error ? err.message : 'An error occurred while fetching featured cars');
       } finally {
         setIsLoading(false);
       }

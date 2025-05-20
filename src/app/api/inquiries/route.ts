@@ -65,10 +65,11 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
     
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error submitting inquiry:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return NextResponse.json(
-      { success: false, error: 'Server error', message: error.message },
+      { success: false, error: 'Server error', message: errorMessage },
       { status: 500 }
     );
   }
@@ -94,7 +95,7 @@ export async function GET(request: NextRequest) {
     console.log('GET /api/inquiries: Query params:', { email, status, limit, page, skip });
     
     // Build query
-    const query: any = {};
+    const query: Record<string, string> = {};
     if (email) query.email = email;
     if (status) query.status = status;
     
@@ -132,10 +133,11 @@ export async function GET(request: NextRequest) {
       }
     });
     
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching inquiries:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return NextResponse.json(
-      { success: false, error: 'Server error', message: error.message },
+      { success: false, error: 'Server error', message: errorMessage },
       { status: 500 }
     );
   }

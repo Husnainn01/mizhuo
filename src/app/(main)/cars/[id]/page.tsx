@@ -25,9 +25,9 @@ const getCar = async (id: string) => {
 };
 
 export default async function CarDetailsPage({ params }: { params: { id: string } }) {
-  // Await the params object to ensure it's resolved before use
-  const resolvedParams = await Promise.resolve(params);
-  const car = await getCar(resolvedParams.id);
+  // Get the car ID directly from params without awaiting
+  const carId = params.id;
+  const car = await getCar(carId);
   
   if (!car) {
     return (
@@ -65,7 +65,7 @@ export default async function CarDetailsPage({ params }: { params: { id: string 
   const customBreadcrumbs = [
     { label: 'Home', href: '/' },
     { label: 'Cars', href: '/cars' },
-    { label: `${car.year} ${car.make} ${car.model}`, href: `/cars/${resolvedParams.id}` }
+    { label: `${car.year} ${car.make} ${car.model}`, href: `/cars/${carId}` }
   ];
   
   // Prepare car specifications

@@ -25,7 +25,7 @@ interface CarCardProps {
   isFeatured?: boolean;
 }
 
-const CarCard: React.FC<CarCardProps> = ({ car, isFeatured = false }) => {
+const CarCard: React.FC<CarCardProps> = ({ car }) => {
   // Format price with currency
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {
