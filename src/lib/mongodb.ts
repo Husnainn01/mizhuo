@@ -23,7 +23,7 @@ declare global {
 }
 
 // Initialize the cache
-const cached: MongooseCache = global.mongoose || { conn: null, promise: null };
+let cached: MongooseCache = global.mongoose || { conn: null, promise: null };
 
 // Set the global mongoose cache if it doesn't exist
 if (!global.mongoose) {

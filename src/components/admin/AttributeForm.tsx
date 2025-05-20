@@ -11,7 +11,7 @@ interface AttributeFormProps {
     type: string;
     isActive: boolean;
   };
-  onSubmit: (data: any) => void;
+  onSubmit: (data: Record<string, unknown>) => void;
   attributeType: string;
   isEditing?: boolean;
   isSubmitting: boolean;
@@ -170,7 +170,7 @@ export default function AttributeForm({
           id="isActive"
           name="isActive"
           checked={formData.isActive}
-          onChange={handleChange as any}
+          onChange={handleChange as React.ChangeEventHandler<HTMLInputElement>}
           className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
           disabled={isSubmitting}
         />

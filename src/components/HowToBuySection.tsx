@@ -13,6 +13,7 @@ const containerVariants = {
   }
 };
 
+// Item animation variants
 const itemVariants = {
   hidden: { y: 20, opacity: 0 },
   visible: {
@@ -26,7 +27,7 @@ const itemVariants = {
   }
 };
 
-export default function HowToBuySection() {
+export default function HowToBuySection(): React.ReactElement {
   return (
     <section className="py-20 bg-gradient-to-b from-white to-gray-50">
       <div className="container mx-auto px-4">
@@ -35,7 +36,7 @@ export default function HowToBuySection() {
             How to Buy Your Dream Car
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            At AutoElite, we've made the car buying process simple and straightforward. Follow these easy steps to drive home in your perfect vehicle.
+            At AutoElite, we&apos;ve made the car buying process simple and straightforward. Follow these easy steps to drive home in your perfect vehicle.
           </p>
         </div>
         
@@ -92,7 +93,7 @@ export default function HowToBuySection() {
               </div>
               <h3 className="text-xl font-bold mb-3 text-gray-800">Contact Us</h3>
               <p className="text-gray-600">
-                Reach out to our team through multiple channels. We'll handle all payment and documentation details.
+                Reach out to our team through multiple channels. We&apos;ll handle all payment and documentation details.
               </p>
             </div>
           </motion.div>
