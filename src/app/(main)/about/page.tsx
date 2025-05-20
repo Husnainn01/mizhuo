@@ -1,10 +1,9 @@
 'use client';
 import Image from "next/image";
 import Link from "next/link";
-import { FaCar, FaHandshake, FaUsers, FaHistory, FaMedal, FaPhone, FaArrowDown, FaRegStar } from "react-icons/fa";
-import { useEffect, useRef, useState } from "react";
-// @ts-ignore
-import { motion, useAnimation } from "framer-motion";
+import { FaCar, FaHandshake, FaUsers, FaHistory, FaArrowDown, FaRegStar } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 const milestones = [
   {
@@ -45,8 +44,8 @@ function AnimatedCounter({ value }: { value: number }) {
     let start = 0;
     const end = value;
     if (start === end) return;
-    let incrementTime = 2000 / end;
-    let timer = setInterval(() => {
+    const incrementTime = 2000 / end;
+    const timer = setInterval(() => {
       start += Math.ceil(end / 100);
       if (start >= end) {
         setCount(end);

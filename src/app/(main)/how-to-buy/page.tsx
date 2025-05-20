@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import PageTemplate from '@/components/PageTemplate';
 import Link from 'next/link';
-import Image from 'next/image';
+// import Image from 'next/image';
 
 // Animation variants
 const containerVariants = {

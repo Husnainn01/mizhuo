@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
@@ -239,7 +238,7 @@ export default function AuctionPage() {
           <div className="max-w-3xl mx-auto">
             <div className="space-y-6">
               <div className="bg-blue-50 rounded-lg p-6">
-                <h3 className="text-lg font-bold text-blue-800 mb-2">How do I know which auction houses have the cars I'm looking for?</h3>
+                <h3 className="text-lg font-bold text-blue-800 mb-2">How do I know which auction houses have the cars I&apos;m looking for?</h3>
                 <p className="text-gray-700">
                   Each auction house specializes in different types of vehicles. Our representatives can guide you toward the most suitable auction houses based on your preferences.
                 </p>
