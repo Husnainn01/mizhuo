@@ -1,0 +1,6 @@
+# Ignore build outputs
+.next
+dist
+
+# Ignore node_modules (Vercel handles this automatically)
+node_modules 

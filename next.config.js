@@ -9,10 +9,12 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  output: 'standalone',
+  // Explicit settings for client components
   experimental: {
     // Optimize package imports
     optimizePackageImports: ['framer-motion'],
+    // Enhanced client manifest generation
+    serverComponentsExternalPackages: [],
   },
   // Server-side rendering settings
   trailingSlash: true,
