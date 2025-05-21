@@ -17,18 +17,17 @@ interface MongooseCache {
   promise: Promise<typeof mongoose> | null;
 }
 
-// Add a mongoose property to the global type
-declare global {
-  // eslint-disable-next-line no-var
-  var mongoose: MongooseCache | undefined;
-}
+// Use a safer way to handle global variables
+let globalWithMongoose = global as typeof globalThis & {
+  mongoose?: MongooseCache;
+};
 
 // Initialize the cache
-const cached: MongooseCache = global.mongoose || { conn: null, promise: null };
+const cached: MongooseCache = globalWithMongoose.mongoose || { conn: null, promise: null };
 
 // Set the global mongoose cache if it doesn't exist
-if (!global.mongoose) {
-  global.mongoose = cached;
+if (!globalWithMongoose.mongoose) {
+  globalWithMongoose.mongoose = cached;
 }
 
 export async function connectDB() {

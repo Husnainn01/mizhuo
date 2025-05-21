@@ -3,6 +3,7 @@
   "buildCommand": "npm run vercel-build",
   "regions": ["fra1"],
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "NEXT_PRIVATE_LOCAL_WEBPACK": "1"
   }
 } 
