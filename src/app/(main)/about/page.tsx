@@ -5,8 +5,8 @@ import { FaCar, FaHandshake, FaUsers, FaHistory, FaArrowDown, FaRegStar } from "
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
+// export const dynamic = 'force-dynamic';
+// export const runtime = 'nodejs';
 
 const milestones = [
   {

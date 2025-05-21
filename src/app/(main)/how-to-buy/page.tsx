@@ -5,8 +5,8 @@ import PageTemplate from '@/components/PageTemplate';
 import Link from 'next/link';
 // import Image from 'next/image';
 
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
+// export const dynamic = 'force-dynamic';
+// export const runtime = 'nodejs';
 
 // Animation variants
 const containerVariants = {

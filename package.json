@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && next export -o out",
+    "build": "next build",
     "vercel-build": "rm -rf .next && next build",
-    "netlify-build": "next build && next export -o out",
+    "netlify-build": "npm install --legacy-peer-deps && next build",
     "start": "next start",
     "lint": "next lint",
     "create-admin": "npx tsx src/scripts/createAdminUser.ts"

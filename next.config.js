@@ -2,7 +2,6 @@
 const nextConfig = {
   images: {
     domains: ['res.cloudinary.com'],
-    unoptimized: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
@@ -12,14 +11,8 @@ const nextConfig = {
   },
   // Use React Strict Mode for better development 
   reactStrictMode: true,
-  // Enable static exports
-  output: 'export',
-  // Disable server components for static export
-  experimental: {
-    appDir: true
-  },
-  // Required for static export with route groups
-  trailingSlash: true,
+  
+  // Removed static export settings since they conflict with dynamic features
 }
 
 module.exports = nextConfig 

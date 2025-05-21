@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
+// export const dynamic = 'force-dynamic';
+// export const runtime = 'nodejs';
 
 export const metadata: Metadata = {
   title: 'How to Buy | AutoElite',
