@@ -9,12 +9,12 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Explicit settings for client components
+  // Explicitly disable output mode
+  output: undefined,
+  // Simplify experimental config
   experimental: {
-    // Optimize package imports
+    // Keep only what's essential
     optimizePackageImports: ['framer-motion'],
-    // Enhanced client manifest generation
-    serverComponentsExternalPackages: [],
   },
   // Server-side rendering settings
   trailingSlash: true,

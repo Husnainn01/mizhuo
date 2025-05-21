@@ -11,6 +11,9 @@ import FeaturedCarsSection from "@/components/FeaturedCarsSection";
 import HeroSection from "@/components/HeroSection";
 import InfoBar from "@/components/InfoBar";
 
+// Adding explicit export for client-side handling
+export const dynamic = 'force-dynamic';
+
 // Animation variants for scroll-to-top button
 
 export default function Home() {
