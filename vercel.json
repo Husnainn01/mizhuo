@@ -1,15 +1,9 @@
 {
-  "buildCommand": "npm run vercel-build",
   "framework": "nextjs",
-  "installCommand": "npm install",
+  "buildCommand": "npm run vercel-build",
   "regions": ["fra1"],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ],
   "env": {
-    "CLOUDINARY_URL": "@cloudinary_url"
+    "CLOUDINARY_URL": "@cloudinary_url",
+    "NODE_ENV": "production"
   }
 } 

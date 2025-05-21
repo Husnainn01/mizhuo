@@ -1,8 +1,13 @@
+import ClientWrapper from "./ClientWrapper";
 import HomePage from "../home-page";
 
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
+// Export as static - this helps with deployment
+export const dynamic = 'force-static';
 
 export default function Home() {
-  return <HomePage />;
+  return (
+    <ClientWrapper>
+      <HomePage />
+    </ClientWrapper>
+  );
 }
