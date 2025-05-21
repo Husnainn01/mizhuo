@@ -4,6 +4,9 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 interface FAQItem {
   question: string;
   answer: string;

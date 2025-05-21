@@ -5,6 +5,9 @@ import Image from 'next/image';
 // import Link from 'next/link';
 import { motion } from 'framer-motion';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: '',

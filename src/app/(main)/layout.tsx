@@ -9,6 +9,7 @@ import ScrollToTop from "@/components/ui/ScrollToTop";
 const inter = Inter({ subsets: ["latin"] });
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export default function MainLayout({
   children,

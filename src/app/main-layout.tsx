@@ -3,6 +3,9 @@ import Footer from "@/components/Footer";
 import InfoBar from "@/components/InfoBar";
 import ScrollToTop from "@/components/ScrollToTop";
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <>

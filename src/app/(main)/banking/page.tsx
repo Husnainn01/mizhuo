@@ -2,6 +2,9 @@
 import React, { useState } from 'react';
 import { FaUniversity, FaRegCopy, FaInfoCircle } from 'react-icons/fa';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 const bankingDetails = [
   { label: 'Account Title', value: 'MG Trading Limited' },
   { label: 'Account Number', value: '0062400' },

@@ -4,6 +4,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export default function AuctionPage() {
   // State for active day (for mobile view)
   const [activeDay, setActiveDay] = useState<keyof typeof auctionSchedule>('Monday');

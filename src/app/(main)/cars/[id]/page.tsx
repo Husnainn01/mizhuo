@@ -7,6 +7,9 @@ import CarImageGallery from '@/components/cars/CarImageGallery';
 import connectDB from '@/lib/mongodb';
 import CarListing from '@/models/Car';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export const metadata: Metadata = {
   title: 'Car Details | AutoElite',
   description: 'View detailed information about this vehicle including specifications, features, and pricing.',
