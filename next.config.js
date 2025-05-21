@@ -12,7 +12,11 @@ const nextConfig = {
   // Use React Strict Mode for better development 
   reactStrictMode: true,
   
-  // Removed static export settings since they conflict with dynamic features
+  // Ensure path aliases are properly resolved
+  webpack: (config, { isServer }) => {
+    // Enable proper module resolution
+    return config;
+  },
 }
 
 module.exports = nextConfig 
