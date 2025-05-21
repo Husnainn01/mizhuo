@@ -1,17 +1,29 @@
 import { v2 as cloudinary } from 'cloudinary';
 
+// Add a console log to help debug environment variables
+console.log('Cloudinary environment check:', { 
+  hasUrl: !!process.env.CLOUDINARY_URL,
+  hasCloudName: !!process.env.CLOUDINARY_CLOUD_NAME,
+  hasApiKey: !!process.env.CLOUDINARY_API_KEY,
+  env: process.env.NODE_ENV
+});
+
 // Configure Cloudinary - try using CLOUDINARY_URL first, then fall back to individual params
 if (process.env.CLOUDINARY_URL) {
   // Let Cloudinary use the URL format (cloudinary://api_key:api_secret@cloud_name)
   // This is automatically handled by the SDK when CLOUDINARY_URL is present
-} else {
+  console.log('Using CLOUDINARY_URL for configuration');
+} else if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
   // Fall back to individual params
+  console.log('Using individual Cloudinary parameters');
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME || '',
     api_key: process.env.CLOUDINARY_API_KEY || '',
     api_secret: process.env.CLOUDINARY_API_SECRET || '',
     secure: true
   });
+} else if (process.env.NODE_ENV === 'production') {
+  console.warn('⚠️ Missing Cloudinary configuration in production environment');
 }
 
 /**

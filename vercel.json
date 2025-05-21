@@ -8,5 +8,8 @@
       "src": "/(.*)",
       "dest": "/$1"
     }
-  ]
+  ],
+  "env": {
+    "CLOUDINARY_URL": "@cloudinary_url"
+  }
 } 
