@@ -1,13 +1,14 @@
 [build]
   command = "npm run build"
-  publish = ".next"
+  publish = "out"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
 [build.environment]
   NEXT_PRIVATE_TARGET = "server"
-  NODE_VERSION = "18"
+  NODE_ENV = "production"
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
 
 # Handle redirects for SPA
 [[redirects]]
