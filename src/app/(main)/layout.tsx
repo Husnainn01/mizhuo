@@ -3,9 +3,12 @@ import { Inter } from "next/font/google";
 import InfoBar from "@/components/InfoBar";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import ScrollToTop from "@/components/ui/ScrollToTop";
 
 // Using Inter font but not applying it directly for more flexibility
 const inter = Inter({ subsets: ["latin"] });
+
+export const dynamic = 'force-dynamic';
 
 export default function MainLayout({
   children,
@@ -26,6 +29,7 @@ export default function MainLayout({
       <Suspense fallback={<div className="w-full h-64 bg-gray-900"></div>}>
         <Footer />
       </Suspense>
+      <ScrollToTop />
     </div>
   );
 }

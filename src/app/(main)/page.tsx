@@ -1,13 +1,11 @@
-import ClientWrapper from "./ClientWrapper";
-import HomePage from "../home-page";
+import { Suspense } from 'react';
+import HomeContent from '@/components/home/HomeContent';
 
-// Export as static - this helps with deployment
-export const dynamic = 'force-static';
-
+// Server component that imports client components
 export default function Home() {
   return (
-    <ClientWrapper>
-      <HomePage />
-    </ClientWrapper>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }

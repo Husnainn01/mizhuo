@@ -1,8 +1,6 @@
-import IndexPage from "./index-page";
+import { redirect } from 'next/navigation';
 
-// Disable static generation
-export const dynamic = 'force-dynamic';
-
-export default function Home() {
-  return <IndexPage />;
+// Simple redirect to the (main) route
+export default function RootPage() {
+  redirect('/');
 }
