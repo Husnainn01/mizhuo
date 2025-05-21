@@ -1,9 +1,9 @@
 {
   "framework": "nextjs",
   "buildCommand": "npm run vercel-build",
+  "installCommand": "npm install --legacy-peer-deps",
   "regions": ["fra1"],
   "env": {
-    "NODE_ENV": "production",
-    "NEXT_PRIVATE_LOCAL_WEBPACK": "1"
+    "NODE_ENV": "production"
   }
 } 
